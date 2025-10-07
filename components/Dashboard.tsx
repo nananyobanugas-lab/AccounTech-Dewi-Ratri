@@ -2,7 +2,8 @@
 import React from 'react';
 import Card from './ui/Card';
 import ReusableChart from './ui/Chart';
-import { initialAccounts, initialInvoices } from '../constants';
+// Fix: Import initialContacts to look up contact names
+import { initialAccounts, initialInvoices, initialContacts } from '../constants';
 
 const Dashboard: React.FC = () => {
 
@@ -42,6 +43,11 @@ const Dashboard: React.FC = () => {
     'Paid': 'bg-green-100 text-green-800',
     'Sent': 'bg-blue-100 text-blue-800',
     'Overdue': 'bg-red-100 text-red-800'
+  };
+
+  const getContactName = (contactId: string) => {
+    const contact = initialContacts.find(c => c.id === contactId);
+    return contact ? contact.companyName : 'Unknown Contact';
   };
 
   return (
@@ -97,7 +103,8 @@ const Dashboard: React.FC = () => {
                         {initialInvoices.map(invoice => (
                             <tr key={invoice.id} className="bg-white border-b hover:bg-gray-50">
                                 <td className="px-6 py-4 font-medium text-gray-900">{invoice.id}</td>
-                                <td className="px-6 py-4">{invoice.customerName}</td>
+                                {/* Fix: Use contactId to get the contact name instead of non-existent customerName */}
+                                <td className="px-6 py-4">{getContactName(invoice.contactId)}</td>
                                 <td className="px-6 py-4">{formatCurrency(invoice.total)}</td>
                                 <td className="px-6 py-4">
                                     <span className={`px-2 py-1 text-xs font-medium rounded-full ${statusColors[invoice.status]}`}>{invoice.status}</span>

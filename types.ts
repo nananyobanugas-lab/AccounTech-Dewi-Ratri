@@ -1,5 +1,4 @@
-
-export type Page = 'Dashboard' | 'Buku Besar' | 'Jurnal' | 'Faktur' | 'Tagihan' | 'Laporan';
+export type Page = 'Dashboard' | 'Buku Besar' | 'Jurnal' | 'Faktur' | 'Tagihan' | 'Laporan' | 'Kontak' | 'Produk' | 'Karyawan';
 
 export interface Account {
   id: string;
@@ -31,7 +30,7 @@ export interface InvoiceItem {
 
 export interface Invoice {
   id: string;
-  customerName: string;
+  contactId: string; // Updated from customerName
   issueDate: string;
   dueDate: string;
   items: InvoiceItem[];
@@ -48,10 +47,45 @@ export interface BillItem {
 
 export interface Bill {
   id: string;
-  vendorName: string;
+  contactId: string; // Updated from vendorName
   issueDate: string;
   dueDate: string;
   items: BillItem[];
   total: number;
   status: 'Draft' | 'Awaiting Payment' | 'Paid';
+}
+
+// For AI Chat
+export interface ChatMessage {
+    role: 'user' | 'model';
+    text: string;
+}
+
+// Odoo-inspired modules
+export interface Contact {
+  id: string;
+  name: string;
+  type: 'Customer' | 'Vendor';
+  email: string;
+  phone: string;
+  companyName: string;
+}
+
+export interface Product {
+  id: string;
+  name: string;
+  type: 'Storable' | 'Service';
+  salePrice: number;
+  cost: number;
+  quantityOnHand: number;
+}
+
+export interface Employee {
+    id: string;
+    name: string;
+    position: string;
+    department: string;
+    email: string;
+    hireDate: string;
+    avatarUrl: string;
 }

@@ -1,5 +1,5 @@
-
 import { GoogleGenAI } from "@google/genai";
+import type { ChatMessage } from "../types";
 
 const API_KEY = process.env.API_KEY;
 
@@ -39,4 +39,41 @@ export const getFinancialAnalysis = async (dataSummary: string): Promise<string>
     console.error("Error getting financial analysis:", error);
     return "Maaf, terjadi kesalahan saat mencoba menganalisis data keuangan. Silakan coba lagi nanti.";
   }
+};
+
+export const getChatResponse = async (history: ChatMessage[], newMessage: string, dataContext: string): Promise<string> => {
+    try {
+        const systemInstruction = `
+        Anda adalah asisten AI yang ramah dan sangat membantu untuk aplikasi ERP Akuntansi bernama AccounTech.
+        Tugas Anda adalah menjawab pertanyaan pengguna terkait data operasional dan keuangan perusahaan.
+        Gunakan data ringkasan yang disediakan di bawah ini sebagai konteks utama untuk jawaban Anda.
+        Selalu berikan jawaban dalam bahasa Indonesia yang jelas dan mudah dipahami. Gunakan format markdown jika diperlukan.
+        Jika pertanyaan di luar konteks data yang diberikan, jawablah dengan sopan bahwa Anda hanya dapat membantu dengan pertanyaan terkait data perusahaan yang ada di sistem.
+        
+        Berikut adalah ringkasan data perusahaan saat ini:
+        ---
+        ${dataContext}
+        ---
+        `;
+
+        const contents = history.map(msg => ({
+            role: msg.role,
+            parts: [{ text: msg.text }]
+        }));
+        contents.push({ role: 'user', parts: [{ text: newMessage }] });
+
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents,
+            config: {
+                systemInstruction,
+            },
+        });
+
+        return response.text;
+
+    } catch (error) {
+        console.error("Error getting chat response:", error);
+        return "Maaf, saya mengalami sedikit kendala. Bisakah Anda mengulangi pertanyaan Anda?";
+    }
 };

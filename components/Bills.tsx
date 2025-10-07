@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { initialBills } from '../constants';
+import { initialBills, initialContacts } from '../constants';
 import type { Bill } from '../types';
 
 const Bills: React.FC = () => {
@@ -10,6 +9,11 @@ const Bills: React.FC = () => {
         'Draft': 'bg-gray-100 text-gray-800',
         'Awaiting Payment': 'bg-yellow-100 text-yellow-800',
         'Paid': 'bg-green-100 text-green-800',
+    };
+
+    const getContactName = (contactId: string) => {
+        const contact = initialContacts.find(c => c.id === contactId);
+        return contact ? contact.companyName : 'Unknown Contact';
     };
 
     return (
@@ -32,7 +36,7 @@ const Bills: React.FC = () => {
                         {initialBills.map(bill => (
                             <tr key={bill.id} className="bg-white border-b hover:bg-gray-50">
                                 <td className="px-6 py-4 font-medium text-gray-900">{bill.id}</td>
-                                <td className="px-6 py-4">{bill.vendorName}</td>
+                                <td className="px-6 py-4">{getContactName(bill.contactId)}</td>
                                 <td className="px-6 py-4">{new Date(bill.issueDate).toLocaleDateString('id-ID')}</td>
                                 <td className="px-6 py-4">{new Date(bill.dueDate).toLocaleDateString('id-ID')}</td>
                                 <td className="px-6 py-4 text-right font-medium">{formatCurrency(bill.total)}</td>
